@@ -820,7 +820,7 @@ sub cmd_privsign {
       $classtime = $1;
       $args[0] = substr($args[0], 0, -10)."0000000000";
     }
-    ($status, $lout, $lerr) = rungpg('/dev/null', undef, $gpg, "--batch", "--force-v3-sigs", "--files-are-digests", "--allow-non-selfsigned-uid", "--digest-algo=$hashalgo", "--no-verbose", "--no-armor", "--no-secmem-warning", "--ignore-time-conflict", "--passphrase-fd=0", "-sbo", "-", $args[0]);
+    ($status, $lout, $lerr) = rungpg('/dev/null', undef, $gpg, "--batch", "--force-v3-sigs", "--file-is-digest", "--allow-non-selfsigned-uid", "--digest-algo=$hashalgo", "--no-verbose", "--no-armor", "--no-secmem-warning", "--ignore-time-conflict", "--passphrase-fd=0", "-sbo", "-", $args[0]);
     $lout = patchclasstime($lout, $classtime) if $classtime && !$status;
     shift @args;
     push @out, $lout;
@@ -846,7 +846,7 @@ sub cmd_sign {
       $classtime = $1;
       $args[0] = substr($args[0], 0, -10)."0000000000";
     }
-    ($status, $lout, $lerr) = rungpg("$phrases/$user", undef, $gpg, "--batch", "--force-v3-sigs", "--files-are-digests", "--digest-algo=$hashalgo", "--no-verbose", "--no-armor", "--no-secmem-warning", "--ignore-time-conflict", "--passphrase-fd=0", "-u", $user, "-sbo", "-", $args[0]);
+    ($status, $lout, $lerr) = rungpg("$phrases/$user", undef, $gpg, "--batch", "--force-v3-sigs", "--file-is-digest", "--digest-algo=$hashalgo", "--no-verbose", "--no-armor", "--no-secmem-warning", "--ignore-time-conflict", "--passphrase-fd=0", "-u", $user, "-sbo", "-", $args[0]);
     $lout = patchclasstime($lout, $classtime) if $classtime && !$status;
     shift @args;
     push @out, $lout;
