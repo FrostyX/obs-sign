@@ -702,7 +702,7 @@ sub cmd_keygen {
 
   rungpg_fatal("$phrases/$user", $tdir, $gpg, '--batch', '--no-secmem-warning',
         "--passphrase-fd=0", "--yes",
-        "-u", $user,
+        "-u", "<$user>",
         '--default-cert-level', '3',
         "--keyring", $pubring,
         '--edit-key', $keyid,
@@ -722,7 +722,7 @@ sub cmd_keygen {
   close(F) || die("privkey close error\n");
 
   $ENV{GNUPGHOME} = $org_gnupghome;
-  my $privkey = rungpg_fatal('/dev/null', $tdir, $gpg, '--batch', '--encrypt', '--no-verbose', '--no-secmem-warning', '--trust-model', 'always', '-o-', '-r', "$user", "$tdir/privkey");
+  my $privkey = rungpg_fatal('/dev/null', $tdir, $gpg, '--batch', '--encrypt', '--no-verbose', '--no-secmem-warning', '--trust-model', 'always', '-o-', '-r', "<$user>", "$tdir/privkey");
   remove_tree($tdir);
 
   # send back
@@ -783,7 +783,7 @@ EOL
 sub cmd_pubkey {
   my ($cmd, $user, $hashalgo, @args) = @_;
   die("pubkey: one argument expected\n") if @args;
-  my $pubkey = rungpg_fatal('/dev/null', undef, $gpg, '--export', '-a', $user);
+  my $pubkey = rungpg_fatal('/dev/null', undef, $gpg, '--export', '-a', "<$user>");
   return (0, '', $pubkey);
 }
 
@@ -846,7 +846,7 @@ sub cmd_sign {
       $classtime = $1;
       $args[0] = substr($args[0], 0, -10)."0000000000";
     }
-    ($status, $lout, $lerr) = rungpg("$phrases/$user", undef, $gpg, "--batch", "--force-v3-sigs", "--file-is-digest", "--digest-algo=$hashalgo", "--no-verbose", "--no-armor", "--no-secmem-warning", "--ignore-time-conflict", "--passphrase-fd=0", "-u", $user, "-sbo", "-", $args[0]);
+    ($status, $lout, $lerr) = rungpg("$phrases/$user", undef, $gpg, "--batch", "--force-v3-sigs", "--file-is-digest", "--digest-algo=$hashalgo", "--no-verbose", "--no-armor", "--no-secmem-warning", "--ignore-time-conflict", "--passphrase-fd=0", "-u", "<$user>", "-sbo", "-", $args[0]);
     $lout = patchclasstime($lout, $classtime) if $classtime && !$status;
     shift @args;
     push @out, $lout;
